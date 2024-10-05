@@ -1,0 +1,4 @@
+*.slxc
+*.fig
+/slprj
+/*/slprj

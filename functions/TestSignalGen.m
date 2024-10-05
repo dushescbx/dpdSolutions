@@ -1,0 +1,16 @@
+function [txWaveform, param] = TestSignalGen(param)
+
+testSignal = "Tones"; 
+switch testSignal
+  case "Tones"
+    param.PAModel.bw = 3e6;
+    [txWaveform] = Gen2TonesSig(param.f1,...
+        param.f2, param.SR, param.sN);
+end
+%% test sig interpolate
+[txWaveform] = ...
+    InterpolateSigSpline(txWaveform, ...
+    param.overSamplingRate ...
+    );
+% [txWaveform, param.SR] = InterpolateSig(txWaveform, ...
+%     param.overSamplingRate, param.filterLength, par

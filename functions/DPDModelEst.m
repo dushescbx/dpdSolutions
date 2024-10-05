@@ -1,0 +1,49 @@
+function [] ...
+    = DPDModelEst(param, InputWaveform, ...
+    OutputWaveform, coef)
+
+numDataPts = length(InputWaveform);
+halfDataPts = round(numDataPts/2);
+
+OutputWaveformAfterPA = MemPolyModel('signalGenerator', ...
+    InputWaveform, coef, param.modType);
+
+fitCoefDPDMem = MemPolyModel('coefficientFinder',             ...
+    OutputWaveform(1:halfDataPts),InputWaveform(1:halfDataPts), ...
+    param.memLen,param.degLen,param.modType);
+OutputWaveformAfterDPD = MemPolyModel('signalGenerator', ...
+    InputWaveform, fitCoefDPDMem, param.modType);
+OutputWaveformAfterDPDPA = MemPolyModel('signalGenerator', ...
+    OutputWaveformAfterDPD, coef, param.modType);
+% rmsErrorTimeMem = MemPolyModel('errorMeasure', ...
+%     OutputWaveformAfterDPD, InputWaveform, coef, param.modType);
+% disp(['Percent RMS error in time domain is ' num2str(rmsErrorTimeMem) '%'])
+figure; plot(OutputWaveformAfterDPD, '*');
+figure; plot(OutputWaveformAfterDPDPA, '.');
+figure; plot(OutputWaveformAfterPA, 'o');
+figure; plot(InputWaveform, 'x');
+
+figure;
+plot(real(OutputWaveformAfterDPDPA));
+hold on
+plot(real(InputWaveform));
+
+difference = mean(abs(OutputWaveformAfterDPDPA-InputWaveform))
+
+
+% if figEn
+%     PACharPlot(OutputWaveform, OutputWaveformFitMem, sampleRate)
+%     PACharPlot(OutputWaveformFitMemSine, OutputWaveformFitMem, sampleRate)
+%     PACharModelCompare(InputWaveform, OutputWaveform, OutputWaveformFitMem)
+%
+%     sa = SigSpectrum(...
+%         [OutputWaveform...
+%         OutputWaveformFitMem...
+%         OutputWaveformFitMemSine ...
+%         InputWaveform],...
+%         sampleRate, testSignal, [], ...
+%         {'Actual PA QAM Output', 'Memory Polynomial sine Output',...
+%         'Memory Polynomial QAM Output', 'PA Input'}, 1, 1);
+% else
+%     sa = [];
+% end
