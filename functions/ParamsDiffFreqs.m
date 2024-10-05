@@ -1,4 +1,4 @@
-function [param] = Params()
+function [param] = ParamsDiffFreqs()
 
 %% sine params
 param.PAModel.SineFreqDistr = 1; % 0 - discrete distr, 1 - uniformly distr sines
@@ -17,7 +17,7 @@ param.PAModel.M = 16; % Modulation order
 % test signal select
 % 1 - QAM, 0 - sine
 param.PAModel.signalSel = 1;
-param.PAModel.sps = 4; %4; % Samples per symbol
+param.PAModel.sps = 8; %4; % Samples per symbol
 param.PAModel.pindBm = [23]; % Input power
 % cubic PA model
 param.PAModel.Cubic.gain = 10; % Amplifier gain
@@ -31,13 +31,13 @@ param.PAModel.Saleh.OutputScaling = 0;
 param.PAModel.Filter.num = [0 [ .25]*exp(j*pi/4)];     % phase offset
 param.PAModel.Filter.den = [1 -.75*(1+j)/sqrt(2)]; % complex denominator
 %
-param.PAModel.DataLen = 1e5;
+param.PAModel.DataLen = 1e6;
 param.PAModel.snr = 100;
 param.PAModel.RefImp = 1;
-param.PAModel.beta = 0.35;
+param.PAModel.beta = 0.01;
 param.PAModel.Nsym = 6*70;
 param.PAModel.R = 1000; % Data rate
-param.PAModel.interpFactor = 3.4567; % 1; %
+param.PAModel.interpFactor = 2; % 1; %
 % sine
 if param.PAModel.SineFreqDistr == 0
     param.PAModel.sineFreq = [1e6; 1.75e6;]; % 1e5

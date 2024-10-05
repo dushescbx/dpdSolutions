@@ -9,23 +9,13 @@ if exist('functions','dir')
 end
 
 %% model params
-remoteMeas = 1;
 [param] = Params();
 %% test signal gen
 % [txWaveform, param] = TestSignalGen(param);
 %% PA in/out data
 [results, param] = PAInOutData(param.dataFileName, ...
     param.MatPAModel, param, 1);
-%% remote
-if remoteMeas
-    x = results.InputWaveform;
-    res = 50;
-    pindBm = -10; %dBm
-    pin = 10.^((pindBm-30)/10); % dBm2Watts
-    x = x./max(x)*sqrt(pin*res);
-    RMSin = 10*log10(mean(abs(x).^2/res)) + 30;
-    save('x.mat', 'x');
-end
+
 %% plot input spectrum, AM/AM, gain vs inp pow
 saInput = SigSpectrum(results.InputWaveform,...
     results.sampleRate, results.testSignal, ...
