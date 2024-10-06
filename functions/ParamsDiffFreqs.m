@@ -95,3 +95,5 @@ param.GridSearch.PolyLen = 11;
 %% swap signals
 param.swapSignals = 1; % нахождение коэффов фильтра по одному сигналу
 % (сумма гармонических сигналов), а поиск ошибки модели по другому
+%% time frequency division 
+param.nIter = 5;
