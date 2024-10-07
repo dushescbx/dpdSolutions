@@ -1,12 +1,12 @@
 function [param] = Params()
 
 %% sine params
-param.PAModel.SineFreqDistr = 1; % 0 - discrete distr, 1 - uniformly distr sines
+param.PAModel.SineFreqDistr = 0; % 0 - discrete distr, 1 - uniformly distr sines
 param.PAModel.SineinitPhaseSel = 0; % 0 - random init phase, 1 - zero init phase
 
 %% Mat PA model params
 
-param.MatPAModel = 1; % 1 - математическая модель усилителя, 0 - реальные данные
+param.MatPAModel = 0; % 1 - математическая модель усилителя, 0 - реальные данные
 
 % тестовый сигнал в реальном устройстве
 % (0 - гарм, 1 - OFDM 15MHz, 2 - OFDM 40MHz,
@@ -16,7 +16,7 @@ param.MatPAModelSel = 0; % 0 - Cubic poly, 1 - Wiener model
 param.PAModel.M = 16; % Modulation order
 % test signal select
 % 1 - QAM, 0 - sine
-param.PAModel.signalSel = 1;
+param.PAModel.signalSel = 0;
 param.PAModel.sps = 4; %4; % Samples per symbol
 param.PAModel.pindBm = [23]; % Input power
 % cubic PA model
@@ -40,7 +40,7 @@ param.PAModel.R = 1000; % Data rate
 param.PAModel.interpFactor = 3.4567; % 1; %
 % sine
 if param.PAModel.SineFreqDistr == 0
-    param.PAModel.sineFreq = [1e6; 1.75e6;]; % 1e5
+    param.PAModel.sineFreq = [7.5e6; 20e6;]; % 1e5
 elseif param.PAModel.SineFreqDistr == 1
     param.PAModel.SineStartFreq = -param.PAModel.R/2;
     param.PAModel.SineStopFreq = param.PAModel.R/2;
@@ -51,7 +51,9 @@ end
 
 param.PAModel.sineOversamplingRate = param.PAModel.sps ...
     * param.PAModel.interpFactor;
-if param.PAModel.signalSel == 1
+if ~param.MatPAModel
+param.PAModel.Fs = 200e6;
+elseif param.PAModel.signalSel == 1
     param.PAModel.Fs = param.PAModel.R * param.PAModel.sps ...
         * param.PAModel.interpFactor; % Sampling frequency
 else

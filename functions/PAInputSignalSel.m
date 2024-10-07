@@ -17,3 +17,5 @@ elseif params.signalSel == 1 % QAM
         gain, M, pindBm, DataLen,...
         params, PAModel, fig_en);
 end
+x = PAInputSignal;
+save('dpdLab/x.mat', 'x');

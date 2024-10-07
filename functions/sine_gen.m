@@ -3,14 +3,18 @@ function [PAInputSignal, ...
     sine_gen(amplifier, ...
     pindBm, DataLen, params,...
     PAModel, fig_en)
+%% выбор начальной фазы
 if params.SineinitPhaseSel == 0
     init_phase = 2*pi*rand(length(params.sineFreq), 1);
 else
     init_phase = 0;
 end
+%% время
 t = 0 : 1/params.Fs : (DataLen-1)/params.Fs;
+%% генерация сигналов
 PAInputSignal_init = sum(cos(2*pi.*params.sineFreq*t + init_phase) ...
     + 1i*sin(2*pi.*params.sineFreq*t + init_phase), 1); %
+%% модель на основе БИХ фильтра
 if PAModel == 1
     PAInputSignalFiltered = filter(params.Filter.num, ...
         params.Filter.den, ...
@@ -22,6 +26,7 @@ if PAModel == 1
 else
     PAInputSignalFiltered = [];
 end
+%% выставляем мощность
 PAInputSignal_pow = mean(abs(PAInputSignal_init).^2);
 PAInputSignal_norm = 1/sqrt(PAInputSignal_pow) * PAInputSignal_init;
 pin = 10.^((pindBm-30)/10); % dBm2Watts
