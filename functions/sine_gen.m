@@ -4,20 +4,21 @@ function [PAInputSignal, ...
     pindBm, DataLen, params,...
     PAModel, fig_en)
 %% выбор начальной фазы
-if params.SineinitPhaseSel == 0
-    init_phase = 2*pi*rand(length(params.sineFreq), 1);
+if  params.PAModel.SineinitPhaseSel == 0
+    init_phase = 2*pi*rand(length( params.PAModel.sineFreq), 1);
 else
     init_phase = 0;
 end
 %% время
-t = 0 : 1/params.Fs : (DataLen-1)/params.Fs;
+t = 0 : 1/ params.PAModel.Fs : (DataLen-1- params.Nsync)/ params.PAModel.Fs;
 %% генерация сигналов
-PAInputSignal_init = sum(cos(2*pi.*params.sineFreq*t + init_phase) ...
-    + 1i*sin(2*pi.*params.sineFreq*t + init_phase), 1); %
+PAInputSignal_init = sum(cos(2*pi.* params.PAModel.sineFreq*t + init_phase) ...
+    + 1i*sin(2*pi.* params.PAModel.sineFreq*t + init_phase), 1); %
+PAInputSignal_init = [zeros(1, params.Nsync) PAInputSignal_init];
 %% модель на основе БИХ фильтра
 if PAModel == 1
-    PAInputSignalFiltered = filter(params.Filter.num, ...
-        params.Filter.den, ...
+    PAInputSignalFiltered = filter( params.PAModel.Filter.num, ...
+         params.PAModel.Filter.den, ...
         PAInputSignal_init);
     PAInputSignal_powFiltered = mean(abs(PAInputSignalFiltered).^2);
     PAInputSignalFiltered_norm = 1/sqrt(PAInputSignal_powFiltered) * PAInputSignalFiltered;

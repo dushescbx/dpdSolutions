@@ -16,7 +16,7 @@ param.MatPAModelSel = 0; % 0 - Cubic poly, 1 - Wiener model
 param.PAModel.M = 16; % Modulation order
 % test signal select
 % 1 - QAM, 0 - sine
-param.PAModel.signalSel = 0;
+param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
 param.PAModel.pindBm = [23]; % Input power
 % cubic PA model
@@ -31,13 +31,13 @@ param.PAModel.Saleh.OutputScaling = 0;
 param.PAModel.Filter.num = [0 [ .25]*exp(j*pi/4)];     % phase offset
 param.PAModel.Filter.den = [1 -.75*(1+j)/sqrt(2)]; % complex denominator
 %
-param.PAModel.DataLen = 1e5;
+param.PAModel.DataLen = 1e6;
 param.PAModel.snr = 100;
-param.PAModel.RefImp = 1;
+param.PAModel.RefImp = 50;
 param.PAModel.beta = 0.35;
 param.PAModel.Nsym = 6*70;
 param.PAModel.R = 1000; % Data rate
-param.PAModel.interpFactor = 3.4567; % 1; %
+param.PAModel.interpFactor = 10/4; % 1; %
 % sine
 if param.PAModel.SineFreqDistr == 0
     param.PAModel.sineFreq = [7.5e6; 20e6;]; % 1e5
@@ -52,7 +52,7 @@ end
 param.PAModel.sineOversamplingRate = param.PAModel.sps ...
     * param.PAModel.interpFactor;
 if ~param.MatPAModel
-param.PAModel.Fs = 200e6;
+    param.PAModel.Fs = 200e6;
 elseif param.PAModel.signalSel == 1
     param.PAModel.Fs = param.PAModel.R * param.PAModel.sps ...
         * param.PAModel.interpFactor; % Sampling frequency
@@ -91,9 +91,13 @@ param.modType = 'memPoly'; % 'ctMemPoly'; memPoly
 param.memLen = 5; % глубина памяти
 param.degLen = 5; % степень нелинейности памяти
 %% grid search
-param.GridSearch.On = 0; %поиск оптимальных значений memLen, degLen   
+param.GridSearch.On = 0; %поиск оптимальных значений memLen, degLen
 param.GridSearch.MemLen = 5;
 param.GridSearch.PolyLen = 11;
 %% swap signals
-param.swapSignals = 1; % нахождение коэффов фильтра по одному сигналу
+param.swapSignals = 0; % нахождение коэффов фильтра по одному сигналу
 % (сумма гармонических сигналов), а поиск ошибки модели по другому
+%% sync sequence adding
+param.Nsync = 1e4;
+param.syncData = randi([0 param.PAModel.M-1],...
+    ceil((param.Nsync)/param.PAModel.sineOversamplingRate),1);

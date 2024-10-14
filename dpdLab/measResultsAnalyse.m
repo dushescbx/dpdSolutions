@@ -1,5 +1,5 @@
-close all;
-clear all;
+% close all;
+% clear all;
 load('x.mat');
 load('y.mat');
 figure;
@@ -7,6 +7,6 @@ figure;
 % hold on;
 plot(abs(fft(y)));
 
-figure; plot(real(y));
-% hold on; 
-% plot(real(x));
+figure; %plot(real(y));
+hold on; 
+plot(real(x));
