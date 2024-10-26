@@ -16,9 +16,9 @@ param.MatPAModelSel = 0; % 0 - Cubic poly, 1 - Wiener model
 param.PAModel.M = 16; % Modulation order
 % test signal select
 % 1 - QAM, 0 - sine
-param.PAModel.signalSel = 1;
+param.PAModel.signalSel = 0;
 param.PAModel.sps = 4; %4; % Samples per symbol
-param.PAModel.pindBm = [23]; % Input power
+param.PAModel.pindBm = [-15]; % Input power (dBm)
 % cubic PA model
 param.PAModel.Cubic.gain = 10; % Amplifier gain
 param.PAModel.Cubic.AMPMConversion = 0.1; % AMPMConversion cubic poly
