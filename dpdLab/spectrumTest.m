@@ -14,7 +14,7 @@ RMSinTest = 10*log10(mean(abs(x).^2/res)); % dB
 % figure; plot(x);
 figure; spectrumPlot(Fs, x);
 hold on
-spectrumPlot(Fs, y);
+% spectrumPlot(Fs, y);
 % figure; plot(real(x)); hold on; plot(real(y));
 % figure; plot(imag(x)); hold on; plot(imag(y));
-figure; plot(y);
+% figure; plot(y);

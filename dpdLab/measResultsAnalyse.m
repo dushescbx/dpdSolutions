@@ -1,12 +1,12 @@
 % close all;
 % clear all;
 load('x.mat');
-load('y.mat');
+% load('y.mat');
 figure;
-% plot(abs(fft(x)));
-% hold on;
-plot(abs(fft(y)));
+plot(20*log10(abs(fft(x))));
+hold on;
+% plot(abs(fft(y)));
 
-figure; %plot(real(y));
-hold on; 
-plot(real(x));
+% figure; %plot(real(y));
+% hold on; 
+% plot(real(x));

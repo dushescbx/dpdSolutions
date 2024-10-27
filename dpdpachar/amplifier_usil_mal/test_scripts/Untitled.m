@@ -1,0 +1,1 @@
+[ts,cols]=timeseries(1);

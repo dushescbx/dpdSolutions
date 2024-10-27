@@ -13,10 +13,10 @@ param.MatPAModel = 0; % 1 - математическая модель усили
 % 3 - OFDM 100 MHz
 param.MatPARealSigSel = 0;
 param.MatPAModelSel = 0; % 0 - Cubic poly, 1 - Wiener model
-param.PAModel.M = 16; % Modulation order
+param.PAModel.M = 4; % Modulation order
 % test signal select
 % 1 - QAM, 0 - sine
-param.PAModel.signalSel = 0;
+param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
 param.PAModel.pindBm = [-15]; % Input power (dBm)
 % cubic PA model
@@ -31,13 +31,15 @@ param.PAModel.Saleh.OutputScaling = 0;
 param.PAModel.Filter.num = [0 [ .25]*exp(j*pi/4)];     % phase offset
 param.PAModel.Filter.den = [1 -.75*(1+j)/sqrt(2)]; % complex denominator
 %
-param.PAModel.DataLen = 1e6;
+param.PAModel.Fs = 200e6;
+param.PAModel.DataLen =  1e6; % samples number
 param.PAModel.snr = 100;
 param.PAModel.RefImp = 50;
 param.PAModel.beta = 0.35;
 param.PAModel.Nsym = 6*70;
-param.PAModel.R = 1000; % Data rate
-param.PAModel.interpFactor = 10/4; % 1; %
+param.PAModel.R = 1e6; % Data rate
+param.PAModel.interpFactor = param.PAModel.Fs/param.PAModel.R/param.PAModel.sps; % 1; %
+% param.PAModel.interpFactor = param.PAModel.DataLen/param.PAModel.R/param.PAModel.sps; % 1;
 % sine
 if param.PAModel.SineFreqDistr == 0
     param.PAModel.sineFreq = [7.5e6; 20e6;]; % 1e5
@@ -60,31 +62,11 @@ else
     param.PAModel.Fs = param.PAModel.sineOversamplingRate * 2 * max(param.PAModel.sineFreq);
 end
 param.PAModel.fltDelay = param.PAModel.Nsym / (2*param.PAModel.R);
-
-%% test signal params
-param.f1 = 1.8e6;
-param.f2 = 2.6e6;
-param.sN = 1e6;
-param.SR = 100e6;
-
 %% interpolate params
 param.overSamplingRate = param.PAModel.sps * param.PAModel.interpFactor;
 param.filterLength = 6*70;
-%% saved data file
-switch param.MatPARealSigSel
-    case 0
-        param.PAModel.bw = 3e6;
-        param.dataFileName = 'PACharSavedDataTones';
-    case 1
-        param.PAModel.bw = 15e6;
-        param.dataFileName = 'PACharSavedData15MHz';
-    case 2
-        param.PAModel.bw = 40e6;
-        param.dataFileName = 'PACharSavedData40MHz';
-    case 3
-        param.PAModel.bw = 100e6;
-        param.dataFileName = 'PACharSavedData100MHz';
-end
+%%
+PACharSavedDataParam;
 %% PA model select
 param.modType = 'memPoly'; % 'ctMemPoly'; memPoly
 %% PA model params
@@ -98,6 +80,6 @@ param.GridSearch.PolyLen = 11;
 param.swapSignals = 0; % нахождение коэффов фильтра по одному сигналу
 % (сумма гармонических сигналов), а поиск ошибки модели по другому
 %% sync sequence adding
-param.Nsync = 1e4;
+param.Nsync = 1e2;
 param.syncData = randi([0 param.PAModel.M-1],...
-    ceil((param.Nsync)/param.PAModel.sineOversamplingRate),1);
+    ceil((param.Nsync)),1);

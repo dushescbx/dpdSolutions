@@ -1,0 +1,6 @@
+function [input_ar, output_ar] = download_power_arrays(com, APSK)
+%% гюцпсфюел дюммше н бундмни х бшундмни лнымнярх
+output_ar = load(strcat(com.direct, com.pa_meas_sig_folder_name, com.output_pa_power_wo_dpd, ...
+    num2str(APSK), 'APSK.txt.mat'));
+input_ar = load(strcat(com.direct, com.pa_meas_sig_folder_name, com.input_pa_power_wo_dpd, ...
+    num2str(APSK), 'APSK.txt.mat'));
