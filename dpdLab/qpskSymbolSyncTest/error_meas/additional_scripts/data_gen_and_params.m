@@ -6,9 +6,9 @@ param.M_NDA = 4;
 
 param.Nsym = 50;           % Filter span in symbol durations
 param.beta = 0.35;         % Roll-off factor
-param.sampsPerSym = 2;    % Upsampling factor
+param.sampsPerSym = 4;    % Upsampling factor
 % Parameters
-param.DataL = 1e5;             % Data length in symbols
+param.DataL = 1e4;             % Data length in symbols
 param.R = 1000;               % Data rate
 param.Fs = param.R * param.sampsPerSym;   % Sampling frequency
 param.IF = 1; % Interpolation factor
@@ -41,9 +41,21 @@ else
 end
 % Time vector sampled at symbol rate
 signal.tx = (0: param.DataL - 1) / param.R;
-%% siglal dist
-param.delta_f = 0; %0.01*length(x); %0.1*length(x);% ; %; %0.1*length(x)
-param.delpa_phi = pi/8; %pi/8; %;
-param.delayVec = [0];
+% %% siglal dist
+% param.delta_f = 0.1; %-0.5 ... 0.5
+% param.delpa_phi = 0; %; -pi ... pi
+% param.delayVec = [0]; % - length(sig) ... length(sig) 
 %% filter design
 param.hfir = rcosdesign(param.beta, param.Nsym, param.sampsPerSym, 'sqrt');
+%% filter design
+param.NsymRx = param.Nsym;
+param.hfirRx = rcosdesign(param.beta, param.NsymRx, param.sampsPerSym, 'sqrt'); %*param.IF
+%% Test params
+param.test.iterN = 1e1;
+%% siglal dist
+param.test.delta_f = linspace(-0.5, 0.5, param.test.iterN); %-0.5 ... 0.5
+param.test.delpa_phi = linspace(-pi, pi, param.test.iterN); %; -pi ... pi
+param.test.delayVec = linspace(-param.sampsPerSym*param.IF, param.sampsPerSym*param.IF, param.test.iterN); % - length(sig) ... length(sig) 
+param.test.k1 = randi(param.test.iterN, 1, param.test.iterN);
+param.test.k2 = randi(param.test.iterN, 1, param.test.iterN);
+param.test.k3 = randi(param.test.iterN, 1, param.test.iterN);

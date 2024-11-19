@@ -1,0 +1,86 @@
+clear all
+close all
+%% add model parameters functions to path
+if exist('additional_scripts','dir')
+    p = genpath('additional_scripts');
+    addpath(p);
+end
+if exist('sync_rab','dir')
+    p = genpath('sync_rab');
+    addpath(p);
+end
+%%
+[param, signal] = data_gen_and_params();
+%% spectrumPlot(Fs, x)
+[signal, param] = tx_rrc_filter(param, signal);
+%%
+signal = spline_interpolation(signal, param);
+% figure;
+% spectrumPlot(1, signal.yq); hold on;
+RMS = zeros(1, param.test.iterN);
+delta_f = zeros(1, param.test.iterN);
+delpa_phi = zeros(1, param.test.iterN);
+delayVec = zeros(1, param.test.iterN);
+offset_timeAR = zeros(1, param.test.iterN);
+RMS = zeros(1, param.test.iterN);
+for i = 1 : param.test.iterN
+
+    % delta_f(i) = param.test.delta_f(param.test.k1(i));
+    delpa_phi(i) = param.test.delpa_phi(param.test.k2(i));
+    % delayVec(i) = param.test.delayVec(param.test.k3(i));
+    % delayVec(i) = param.test.delayVec(i);
+    delayVec(i) = 0.2;
+    %% timing, phase, freq shift
+    signal.yqDist = phase_freq_timing_offset(signal.yq, delta_f(i), ...
+        delpa_phi(i), delayVec(i));
+    %% Rx filter
+    % [signal.yqDistFilt] =...
+    %     rx_rrc_filterNew(...
+    %     signal.freq_phase_corrected_dataTest,...
+    %     param.hfirRx, param.NsymRx, ...
+    %     param.sampsPerSym);
+    % spectrumPlot(1, signal.yqDist)
+
+    %%
+    % [signal.yqDistFilt, param] =...
+    % rx_rrc_filter(signal.freq_phase_corrected_dataTest,...
+    % param);
+
+
+    [signal.yqDistFilt, param] = rx_rrc_filter(signal.yqDist, param);
+    % spectrumPlot(1, signal.yqDistFilt)
+        %% частотная и фазовая синхронизация
+    [angle_shiftTest(i), ...
+        delta_f_est_with_fftTest(i), delta_f_estTest(i)] =...
+        freq_phase_correction(signal.yqDistFilt, signal.yq);
+    %% timing, phase, freq shift
+    % signal.freq_phase_corrected_dataTest =...
+    %     phase_freq_timing_offset(signal.yqDistFilt, -param.delta_f, ...
+    %     -param.delpa_phi, -param.delayVec);
+    % spectrumPlot(1, signal.freq_phase_corrected_data); hold on;
+    % figure; plot(real(signal.freq_phase_corrected_dataTest)); hold on;
+    % plot(real(signal.freq_phase_corrected_data))
+    %% symbol timing sync
+    [ signal.rx_symbol, offset_time ] = ...
+    symbol_recoveryCorr( signal.yqDistFilt, ...
+    1, param.sampsPerSym, 1, signal.x);
+    %% shift finder
+    [ signal.dOutShiftFinder, signal.xShifted, delay ] = ...
+    shiftFinder( signal.rx_symbol, ...
+    signal.x);
+        %% частотная и фазовая синхронизация
+    [angle_shift(i), ...
+        delta_f_est_with_fft(i), delta_f_est(i)] =...
+        freq_phase_correction(signal.dOutShiftFinder, signal.xShifted);
+    offset_timeAR(i) = offset_time;
+        %% частотная и фазовая синхронизация
+        signal.freq_phase_corrected_dataTest =...
+        phase_freq_timing_offset(signal.dOutShiftFinder, -delta_f(i), ...
+        angle_shiftTest(i), 0);
+    %%
+    figure; plot(real(signal.freq_phase_corrected_dataTest)); hold on;
+    plot(real(signal.xShifted));
+    RMS(i) = rms(signal.freq_phase_corrected_dataTest - signal.xShifted);
+end
+%%
+figure; plot(RMS);

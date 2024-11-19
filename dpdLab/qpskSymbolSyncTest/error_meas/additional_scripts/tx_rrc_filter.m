@@ -13,6 +13,10 @@ yc = upfirdn([(signal.x);],... % zeros(param.Nsym/2, 1)
 % yc = complex(yc_r, yc_i);
 % Correct for propagation delay by removing filter transients
 % signal.yc = yc;
-% figure; plot(real(yc), '-*');
-signal.yc = yc(param.sampsPerSym*param.Nsym/2+1:end-param.sampsPerSym*param.Nsym/2+1);
-% figure; plot(real(signal.yc), '-x');
+% figure; plot(real(yc(1:2000)), '-*');
+% figure; plot(real(yc(end-2000:end)), '-*');
+signal.yc = yc(param.sampsPerSym*param.Nsym/2+1:end-param.sampsPerSym*param.Nsym/2+param.sampsPerSym - 1);
+% % figure;
+% hold on; 
+% plot(real(signal.yc(end-2000:end)), '-x');
+% plot(real(signal.yc(1:2000)), '-x');
