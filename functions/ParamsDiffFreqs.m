@@ -97,3 +97,7 @@ param.swapSignals = 1; % нахождение коэффов фильтра по
 % (сумма гармонических сигналов), а поиск ошибки модели по другому
 %% time frequency division 
 param.nIter = 5;
+%% sync sequence adding
+param.Nsync = 1e2;
+param.syncData = randi([0 param.PAModel.M-1],...
+    ceil((param.Nsync)),1);
