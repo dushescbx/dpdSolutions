@@ -1,6 +1,7 @@
 function [results, param] = resultsGen(param, ...
     modOut_interp, noisyLinOut)
 
+
 results.InputWaveform = modOut_interp;
 results.OutputWaveform = noisyLinOut;
 results.InputWaveformdBm  = mag2db(abs(results.InputWaveform)) ...

@@ -9,7 +9,7 @@ else
     if argType == "OutputPower"
         dinP = mean(diff(Input(nan_ind+1:floor(0.8*L))));
     else
-        dinP = mean(diff(Input(nan_ind+1:end)));
+        dinP = mean(diff(Input(nan_ind+1:floor(0.8*L))));
     end
     y1 = Input(floor(L/2)) - dinP*floor(L/2);
     N = 0:L-1;

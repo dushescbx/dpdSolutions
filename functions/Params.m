@@ -6,7 +6,7 @@ param.PAModel.SineinitPhaseSel = 0; % 0 - random init phase, 1 - zero init phase
 
 %% Mat PA model params
 
-param.MatPAModel = 0; % 1 - математическая модель усилителя, 0 - реальные данные
+param.MatPAModel = 1; % 1 - математическая модель усилителя, 0 - реальные данные
 
 % тестовый сигнал в реальном устройстве
 % (0 - гарм, 1 - OFDM 15MHz, 2 - OFDM 40MHz,
@@ -18,7 +18,7 @@ param.PAModel.M = 4; % Modulation order
 % 1 - QAM, 0 - sine
 param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
-param.PAModel.pindBm = [-15]; % Input power (dBm)
+param.PAModel.pindBm = [25]; % Input power (dBm)
 % cubic PA model
 param.PAModel.Cubic.gain = 10; % Amplifier gain
 param.PAModel.Cubic.AMPMConversion = 0.1; % AMPMConversion cubic poly
@@ -26,7 +26,7 @@ param.PAModel.Cubic.AMPMConversion = 0.1; % AMPMConversion cubic poly
 param.PAModel.Saleh.InputScaling = 0;
 param.PAModel.Saleh.AMAMParameters = [2.1587 1.1517];
 param.PAModel.Saleh.AMPMParameters = [4.0033 9.1040];
-param.PAModel.Saleh.OutputScaling = 0;
+param.PAModel.Saleh.OutputScaling = 25;
 % filter model
 param.PAModel.Filter.num = [0 [ .25]*exp(j*pi/4)];     % phase offset
 param.PAModel.Filter.den = [1 -.75*(1+j)/sqrt(2)]; % complex denominator
@@ -68,7 +68,7 @@ param.filterLength = 6*70;
 %%
 PACharSavedDataParam;
 %% PA model select
-param.modType = 'memPoly'; % 'ctMemPoly'; memPoly
+param.modType = 'ctMemPoly'; % 'ctMemPoly'; memPoly
 %% PA model params
 param.memLen = 5; % глубина памяти
 param.degLen = 5; % степень нелинейности памяти

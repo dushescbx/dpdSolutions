@@ -1,4 +1,4 @@
-function [ tx_symbol, step_size_est_dr_mat ] = ...
+function [ tx_symbol, step_size_est_dr_mat, tx_symbolFull ] = ...
     symbol_recoveryCorr( tx_signal, ...
     symbol_rate, sps, dec_coef, ref_data,...
     refOffset, refOffsetValue)
@@ -48,12 +48,17 @@ if ~refOffset
     [max_val_dr, index_dr] = max(epsilon_dr(:));
     step_size_est_dr_mat = step_size_start_mat + (index_dr - 1) * step_of_loop_mat;
     new_signal_time = step_size_est_dr_mat : 1/symbol_rate : tx_signal_time( end ) ;
+    new_signal_timeFull = step_size_est_dr_mat : 1/symbol_rate/(sps*dec_coef) :...
+    (length(signal)-1) / symbol_rate/(sps*dec_coef);
 else
     step_size_est_dr_mat = 0;
     new_signal_time = refOffsetValue : 1/symbol_rate : tx_signal_time( end ) ;
+    new_signal_timeFull = refOffsetValue : 1/symbol_rate/(sps*dec_coef) :...
+    (length(signal)-1) / symbol_rate/(sps*dec_coef);
 end
 % пересчет сигнала на новую сетку времени
-
+tx_symbolFull = spline( tx_signal_time, tx_signal, new_signal_timeFull );
+tx_symbolFull = reshape(tx_symbolFull, [], 1);
 tx_symbol = spline( tx_signal_time, tx_signal, new_signal_time );
 if length(ref_data) <= length(tx_symbol)
     tx_symbol = tx_symbol(1:length(ref_data)).';

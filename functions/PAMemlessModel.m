@@ -6,6 +6,10 @@ pa = comm.MemorylessNonlinearity('Method','Lookup table','Table',...
 
 OutputWaveformFitMemless = pa(InputWaveform);
 err = abs(OutputWaveform - OutputWaveformFitMemless)./abs(OutputWaveform);
+err = err(10:end-10);
+%%
+figure; plot(abs(OutputWaveform - OutputWaveformFitMemless));
+%%
 rmsErrorMemless = rms(err)*100;
 disp(['Percent RMS error in time domain is ' num2str(rmsErrorMemless) '%'])
 if figEn

@@ -17,7 +17,7 @@ delta_f_est = 1/(2*pi) * angle(sum(z_freq_estimate));
 %% сдвигаем частоту сигнала
 ind = 0:1:length(z)-1;
 %% RF Architectures and Digital Signal Processing Aspects of Digital Wireless Transceivers - Nezami
-% 7-50
+% 7-50w
 [w_orient, index] = max(abs(fft(z)));
 
 k = 1;

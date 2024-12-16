@@ -1,0 +1,15 @@
+close all;
+clear all;
+% load('x.mat');
+Nzeros = 1e4;
+f = [10e6; 25e6];
+Fs = 200e6;
+N = 1e6 - Nzeros;
+t = 0:1/Fs:N/Fs - 1/Fs;
+x = sum(cos(2*pi.*f.*t) + 1i*sin(2*pi.*f.*t));
+x = [zeros(1, Nzeros) x];
+[y, RMSout, Idc, Vdc] = RFWebLab_PA_meas_v1_2(x, -15);
+save('y.mat', 'y', 'RMSout');
+figure;
+plot(10*log10(abs(fft(y))));
+figure; plot(real(y));

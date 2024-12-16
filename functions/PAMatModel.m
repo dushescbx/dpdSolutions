@@ -38,7 +38,12 @@ if fig_en
 end
 %% add noise
 noisyLinOut = awgn(ampOut(:,1), param.PAModel.snr,"measured");
+
+figure; spectrumPlot(1, noisyLinOut, 1);
+figure; spectrumPlot(1, ampOut(:,1), 1);
 % noisyNonLinOut = awgn(ampOut(:,2),param.PAModel.snr,"measured");
 % constdiag(noisyLinOut,noisyNonLinOut);
 %% results
 [results, param] = resultsGen(param, modOut_interp, noisyLinOut);
+%%
+param.amplifier = amplifier;

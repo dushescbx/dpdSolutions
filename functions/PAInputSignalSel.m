@@ -19,3 +19,5 @@ elseif params.PAModel.signalSel == 1 % QAM
 end
 x = PAInputSignal;
 save('dpdLab/x.mat', 'x');
+paramsDemod = params;
+save('dpdLab/paramsDemod.mat', 'paramsDemod');

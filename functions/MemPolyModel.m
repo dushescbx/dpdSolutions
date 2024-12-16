@@ -98,7 +98,7 @@ switch proc
 
         end
         varargout{1} = y;
-
+% varargout{1} = y(memLen:end);
     case 'errorMeasure'
 
         narginchk(5,5)

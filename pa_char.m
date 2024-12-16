@@ -7,6 +7,10 @@ if exist('functions','dir')
     p = genpath('functions');
     addpath(p);
 end
+if exist('dpdLab','dir')
+    p = genpath('dpdLab');
+    addpath(p);
+end
 
 %% model params
 [param] = Params();
@@ -15,11 +19,15 @@ end
 %% PA in/out data
 [results, param] = PAInOutData(param.dataFileName, ...
     param.MatPAModel, param, 1);
-
+%%
+figure;
+spectrumPlot(1, results.InputWaveform, 1);
+figure;
+spectrumPlot(1, results.OutputWaveform, 1);
 %% plot input spectrum, AM/AM, gain vs inp pow
-saInput = SigSpectrum(results.InputWaveform,...
-    results.sampleRate, results.testSignal, ...
-    param.PAModel.bw, [], 0, 1);
+% saInput = SigSpectrum(results.InputWaveform,...
+%     results.sampleRate, results.testSignal, ...
+%     results.sampleRate, [], 0, 1); %param.PAModel.bw, [], 0, 1);
 results.inOutTable = GainVsInPowAndTableGen(...
     results.InputWaveformdBm,...
     results.OutputWaveformdBm, results.OutputWaveform,...
@@ -37,7 +45,7 @@ results.inOutTable = GainVsInPowAndTableGen(...
     results.OutputWaveform, results.sampleRate, ...
     results.testSignal, 0, [0]);
 %% AM/AM, AM/PM plots
-fig_en = 1;
+fig_en = 0;
 if fig_en
     AMAMplot(results.ReferencePower,...
         results.InPower, ...
@@ -51,11 +59,57 @@ if fig_en
         param.PAModel.RefImp);
     figure; plot(results.OutputWaveformFitMemless, '.');
     figure; plot(results.OutputWaveformFitMem, '.');
+    %%
+    figure; plot(real(results.OutputWaveformFitMem), '-.');
+    hold on;
+    plot(real(results.OutputWaveform), '-x')
+    %%
+    figure; plot(real(results.OutputWaveformFitMemless), '-.');
+    hold on;
+    plot(real(results.OutputWaveform), '-x')
 end
 %% DPD test
-close all
-DPDModelEst(param, results.InputWaveform, ...
-    results.OutputWaveform, results.fitCoefMatMem);
+% close all
+% [OutputWaveformAfterDPDPA, OutputWaveformAfterDPD] = ...
+%     DPDModelEst(param, results.InputWaveform, ...
+%     results.OutputWaveform, results.fitCoefMatMem, 1);
+%% dpd test lut
+% close all
+[OutputWaveformAfterDPDPA, OutputWaveformAfterDPD,...
+    inOutTableDPD] = ...
+    DPDModelEstLut(param, results, 1);
+
+%% 
+if 1
+    close all
+    figure;
+    plot(results.inOutTable(:,1), results.inOutTable(:,2), '.')
+    hold on
+    plot(inOutTableDPD(:,1), inOutTableDPD(:,2), '.')
+    grid on
+    xlabel('Input Power (dBm)')
+    ylabel('Output Power (dBm)')
+    title('Output vs Input Power LUT')
+    figure;
+    plot(results.inOutTable(:,1), results.inOutTable(:,3), '.')
+        hold on
+    plot(inOutTableDPD(:,1), inOutTableDPD(:,3), '.')
+    grid on
+    xlabel('Input Power (dBm)')
+    ylabel('Output phase (deg)')
+    title('Output phase vs Input Power LUT')
+end
+%% demod
+load('dpdLab/meas/modOut.mat');
+demodResult = demodSignals(results.InputWaveform,...
+    results.OutputWaveform, OutputWaveformAfterDPDPA,...
+    modOut, param, OutputWaveformAfterDPD);
+%%
+figure;
+spectrumPlot(1, results.OutputWaveform, 1);
+
+hold on
+spectrumPlot(1, OutputWaveformAfterDPDPA, 1);
 %% save data to dpd model
 SaveDataToDpd(results.InputWaveform, ...
     results.numFrames);
