@@ -20,8 +20,8 @@ param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
 param.PAModel.pindBm = [25]; % Input power (dBm)
 % cubic PA model
-param.PAModel.Cubic.gain = 10; % Amplifier gain
-param.PAModel.Cubic.AMPMConversion = 0.1; % AMPMConversion cubic poly
+param.PAModel.Cubic.gain = 100; % Amplifier gain
+param.PAModel.Cubic.AMPMConversion = 0.5; % AMPMConversion cubic poly
 % Saleh PA model
 param.PAModel.Saleh.InputScaling = 0;
 param.PAModel.Saleh.AMAMParameters = [2.1587 1.1517];
@@ -83,3 +83,17 @@ param.swapSignals = 0; % нахождение коэффов фильтра по
 param.Nsync = 1e2;
 param.syncData = randi([0 param.PAModel.M-1],...
     ceil((param.Nsync)),1);
+
+
+%% PA linear gain
+if param.MatPAModel
+    if param.MatPAModelSel
+        param.PAModel.PALinearGain...
+            = param.PAModel.Saleh.OutputScaling;%% не учитывается inputScaling
+    else
+        param.PAModel.PALinearGain =...
+            param.PAModel.Cubic.gain;
+    end
+else
+    param.PAModel.PALinearGain = 0; %% ??????????? добавить
+end

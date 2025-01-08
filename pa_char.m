@@ -29,10 +29,10 @@ spectrumPlot(1, results.OutputWaveform, 1);
 %     results.sampleRate, results.testSignal, ...
 %     results.sampleRate, [], 0, 1); %param.PAModel.bw, [], 0, 1);
 results.inOutTable = GainVsInPowAndTableGen(...
-    results.InputWaveformdBm,...
-    results.OutputWaveformdBm, results.OutputWaveform,...
-    results.InputWaveform, 1);
-% pa memoryless model
+    results.OutputWaveform,...
+    results.InputWaveform, param.PAModel.RefImp, 1);
+
+%% pa memoryless model
 [results.OutputWaveformFitMemless, results.pa] ...
     = PAMemlessModel(results.inOutTable, results.InputWaveform, ...
     results.OutputWaveform, results.sampleRate,...
@@ -78,8 +78,17 @@ end
 [OutputWaveformAfterDPDPA, OutputWaveformAfterDPD,...
     inOutTableDPD] = ...
     DPDModelEstLut(param, results, 1);
+%%
+% paCharTest(results.inOutTable,...
+% inOutTableDPD, param.PAModel.PALinearGain);
 
-%% 
+%%
+[results.InputWaveformdBmDPDPA,...
+    results.OutputWaveformdBmDPDPA, ...
+    results.PhaseShiftDPDPA] =...
+    AMAM_AMPM_gen(results.InputWaveform, ...
+    OutputWaveformAfterDPDPA, param.PAModel.RefImp);
+%%
 if 1
     close all
     figure;
@@ -92,18 +101,38 @@ if 1
     title('Output vs Input Power LUT')
     figure;
     plot(results.inOutTable(:,1), results.inOutTable(:,3), '.')
-        hold on
+    hold on
     plot(inOutTableDPD(:,1), inOutTableDPD(:,3), '.')
     grid on
     xlabel('Input Power (dBm)')
     ylabel('Output phase (deg)')
     title('Output phase vs Input Power LUT')
 end
+if 1
+    % close all
+    figure;
+    plot(results.InputWaveformdBmDPDPA, results.OutputWaveformdBmDPDPA, '.')
+    grid on
+    hold on;
+    plot(results.inOutTable(:,1), results.inOutTable(:,2), '.');
+    xlabel('Input Power (dBm)')
+    ylabel('Output Power (dBm)')
+    title('Output vs Input Power LUT')
+    figure;
+    plot(results.InputWaveformdBmDPDPA, results.PhaseShiftDPDPA, '.')
+    grid on
+    hold on;
+    plot(results.inOutTable(:,1), results.inOutTable(:,3), '.')
+    xlabel('Input Power (dBm)')
+    ylabel('Output phase (deg)')
+    title('Output phase vs Input Power LUT')
+end
+%%
 %% demod
-load('dpdLab/meas/modOut.mat');
-demodResult = demodSignals(results.InputWaveform,...
-    results.OutputWaveform, OutputWaveformAfterDPDPA,...
-    modOut, param, OutputWaveformAfterDPD);
+% load('dpdLab/meas/modOut.mat');
+% demodResult = demodSignals(results.InputWaveform,...
+%     results.OutputWaveform, OutputWaveformAfterDPDPA,...
+%     modOut, param, OutputWaveformAfterDPD);
 %%
 figure;
 spectrumPlot(1, results.OutputWaveform, 1);
