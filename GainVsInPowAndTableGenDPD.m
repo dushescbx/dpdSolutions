@@ -14,7 +14,7 @@ if figEn
     ylabel('Output Power (dBm)')
     title('Output vs Input Power')
 end
-[N,edges,idx] = histcounts(InputWaveformdBm, 'BinWidth', 0.5); % 1
+[N,edges,idx] = histcounts(InputWaveformdBm, 'BinWidth', 0.1/1); % 1
 
 minInPowerdBm = min(InputWaveformdBm);% - 10; % 20
 minIdx = find(edges < minInPowerdBm, 1, 'last');

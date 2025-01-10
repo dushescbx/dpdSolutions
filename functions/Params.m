@@ -18,10 +18,10 @@ param.PAModel.M = 4; % Modulation order
 % 1 - QAM, 0 - sine
 param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
-param.PAModel.pindBm = [25]; % Input power (dBm)
+param.PAModel.pindBm = [20]; % Input power (dBm)
 % cubic PA model
-param.PAModel.Cubic.gain = 100; % Amplifier gain
-param.PAModel.Cubic.AMPMConversion = 0.5; % AMPMConversion cubic poly
+param.PAModel.Cubic.gain = 0; % Amplifier gain
+param.PAModel.Cubic.AMPMConversion = 0.5/4; % AMPMConversion cubic poly
 % Saleh PA model
 param.PAModel.Saleh.InputScaling = 0;
 param.PAModel.Saleh.AMAMParameters = [2.1587 1.1517];
@@ -68,7 +68,7 @@ param.filterLength = 6*70;
 %%
 PACharSavedDataParam;
 %% PA model select
-param.modType = 'ctMemPoly'; % 'ctMemPoly'; memPoly
+param.modType = 'memPoly'; % 'ctMemPoly'; memPoly
 %% PA model params
 param.memLen = 5; % глубина памяти
 param.degLen = 5; % степень нелинейности памяти

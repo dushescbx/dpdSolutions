@@ -11,7 +11,11 @@ else
     else
         dinP = mean(diff(Input(nan_ind+1:floor(0.8*L))));
     end
-    y1 = Input(floor(L/2)) - dinP*floor(L/2);
+    if (L/2) > nan_ind
+        y1 = Input(floor(L/2)) - dinP*floor(L/2);
+    else
+        y1 = Input(nan_ind + 1) - dinP*nan_ind;
+    end
     N = 0:L-1;
     inPint = y1 + dinP*N;
     inOutTable = Input;

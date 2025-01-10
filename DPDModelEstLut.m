@@ -8,10 +8,19 @@ inOutTableDPD = GainVsInPowAndTableGenDPD(...
     gainCoefAr * results.InputWaveform,...
     results.OutputWaveform, ... 
     param.PAModel.RefImp, param.PAModel.PALinearGain, figEn);
-
+%% NaN del
+% input power
+inOutTableDPD(:, 1) = NaNReplace(inOutTableDPD(:, 1), "InputPower", 0);
+% output power
+inOutTableDPD(:, 2) = NaNReplace(inOutTableDPD(:, 2), "OutputPower", 0);
+% phase
+inOutTableDPD(:, 3) = NaNReplace(inOutTableDPD(:, 3), "Phase", 0);
 %
 dpdModel = comm.MemorylessNonlinearity('Method','Lookup table','Table',...
     inOutTableDPD,'ReferenceImpedance', param.PAModel.RefImp); %
+
+PowdBm  = mag2db(abs(results.InputWaveform)) ...
+    + 30 - pow2db(param.PAModel.RefImp);
 
 OutputWaveformAfterDPD = dpdModel(results.InputWaveform);
 % pa memoryless model

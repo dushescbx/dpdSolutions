@@ -129,19 +129,21 @@ if 1
 end
 %%
 %% demod
-% load('dpdLab/meas/modOut.mat');
-% demodResult = demodSignals(results.InputWaveform,...
-%     results.OutputWaveform, OutputWaveformAfterDPDPA,...
-%     modOut, param, OutputWaveformAfterDPD);
+load('dpdLab/meas/modOut.mat');
+demodResult = demodSignals(results.InputWaveform,...
+    results.OutputWaveform, OutputWaveformAfterDPDPA,...
+    modOut, param, OutputWaveformAfterDPD);
 %%
 figure;
 spectrumPlot(1, results.OutputWaveform, 1);
-
 hold on
 spectrumPlot(1, OutputWaveformAfterDPDPA, 1);
+% spectrumPlot(1, results.OutputWaveform, 1);
+legend('no dpd', 'dpd')
+% legend('dpd', 'no dpd')
 %% save data to dpd model
-SaveDataToDpd(results.InputWaveform, ...
-    results.numFrames);
+% SaveDataToDpd(results.InputWaveform, ...
+%     results.numFrames);
 %% grid search to find opt vals
 [rmsErrorTime, rmsErrorFreq] =...
     GridSearch(results.InputWaveform, ...
