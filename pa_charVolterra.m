@@ -26,11 +26,11 @@ end
     results.testSignal, 0, [0]);
 
 %% DPD test
-% close all
+close all
 [OutputWaveformAfterDPDPA, OutputWaveformAfterDPD] = ...
     DPDModelEst(param, results.InputWaveform, ...
     results.OutputWaveform, results.fitCoefMatMem, 1);
-%
+%%
 [results.InputWaveformdBmDPDPA,...
     results.OutputWaveformdBmDPDPA, ...
     results.PhaseShiftDPDPA] =...
@@ -48,7 +48,7 @@ end
     results.OutputWaveformFitMem, param.PAModel.RefImp);
 [results.InputWaveformdBmDPD,...
     results.OutputWaveformdBmDPD, ...
-    results.PhaseShiftModel] =...
+    results.PhaseShiftDPD] =...
     AMAM_AMPM_gen(results.InputWaveform, ...
     OutputWaveformAfterDPD, param.PAModel.RefImp);
 
@@ -56,11 +56,12 @@ end
 if 1
     close all
     figure;
-    % plot(results.InputWaveformdBmDPDPA,...
-    % results.OutputWaveformdBmDPDPA, 'x')
-    plot(results.InputWaveformdBmModel,...
-    results.OutputWaveformdBmModel, 'x')
-    
+    plot(results.InputWaveformdBmDPDPA,...
+    results.OutputWaveformdBmDPDPA, 'x')
+    % plot(results.InputWaveformdBmModel,...
+    % results.OutputWaveformdBmModel, 'x')
+    %   plot(results.InputWaveformdBmDPD,...
+    % results.OutputWaveformdBmDPD, 'x')  
     grid on
     hold on;
     plot(results.InputWaveformdBm, results.OutputWaveformdBm, '.');
@@ -68,9 +69,9 @@ if 1
     ylabel('Output Power (dBm)')
     title('Output vs Input Power LUT')
     figure;
-    % plot(results.InputWaveformdBmDPDPA, results.PhaseShiftDPDPA, 'x')
-    plot(results.InputWaveformdBmModel, results.PhaseShiftModel, 'x')
-    
+    plot(results.InputWaveformdBmDPDPA, results.PhaseShiftDPDPA, 'x')
+    % plot(results.InputWaveformdBmModel, results.PhaseShiftModel, 'x')
+        % plot(results.InputWaveformdBmDPD, results.PhaseShiftDPD, 'x');
     grid on
     hold on;
     plot(results.InputWaveformdBm, results.PhaseShift, '.')
@@ -79,16 +80,16 @@ if 1
     title('Output phase vs Input Power LUT')
 end
 %%
-% %% demod
-% load('dpdLab/meas/modOut.mat');
-% demodResult = demodSignals(results.InputWaveform,...
-%     results.OutputWaveform, OutputWaveformAfterDPDPA,...
-%     modOut, param, OutputWaveformAfterDPD);
-% %%
-% figure;
+%% demod
+load('dpdLab/meas/modOut.mat');
+demodResult = demodSignals(results.InputWaveform,...
+    results.OutputWaveform, OutputWaveformAfterDPDPA,...
+    modOut, param, OutputWaveformAfterDPD);
+%%
+figure;
+spectrumPlot(1, results.OutputWaveform, 1);
+hold on
+spectrumPlot(1, OutputWaveformAfterDPDPA, 1);
 % spectrumPlot(1, results.OutputWaveform, 1);
-% hold on
-% spectrumPlot(1, OutputWaveformAfterDPDPA, 1);
-% % spectrumPlot(1, results.OutputWaveform, 1);
-% legend('no dpd', 'dpd')
-% % legend('dpd', 'no dpd')
+legend('no dpd', 'dpd')
+% legend('dpd', 'no dpd')

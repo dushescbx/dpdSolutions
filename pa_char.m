@@ -19,110 +19,82 @@ end
 %% PA in/out data
 [results, param] = PAInOutData(param.dataFileName, ...
     param.MatPAModel, param, 1);
-%%
-figure;
-spectrumPlot(1, results.InputWaveform, 1);
-figure;
-spectrumPlot(1, results.OutputWaveform, 1);
-%% plot input spectrum, AM/AM, gain vs inp pow
-% saInput = SigSpectrum(results.InputWaveform,...
-%     results.sampleRate, results.testSignal, ...
-%     results.sampleRate, [], 0, 1); %param.PAModel.bw, [], 0, 1);
+
+%% PA model LUT (no memory)
 results.inOutTable = GainVsInPowAndTableGen(...
     results.OutputWaveform,...
-    results.InputWaveform, param.PAModel.RefImp, 1);
+    results.InputWaveform, param.PAModel.RefImp, 0);
 
 %% pa memoryless model
 [results.OutputWaveformFitMemless, results.pa] ...
     = PAMemlessModel(results.inOutTable, results.InputWaveform, ...
     results.OutputWaveform, results.sampleRate,...
     param.PAModel.RefImp, ...
-    1);
+    0);
+%% dpd test lut
+% close all
+[OutputWaveformAfterDPDPALut,...
+ OutputWaveformAfterDPDLut,...
+    inOutTableDPD] = ...
+    DPDModelEstLut(param, results, 1);	
 % results.OutputWaveformFitMemless = results.OutputWaveform;
 %% memory/cross-term memory model
 [results.fitCoefMatMem, results.OutputWaveformFitMem, sa] = ...
     PAModelEst(param, results.InputWaveform, ...
     results.OutputWaveform, results.sampleRate, ...
     results.testSignal, 0, [0]);
-%% AM/AM, AM/PM plots
-fig_en = 0;
-if fig_en
-    AMAMplot(results.ReferencePower,...
-        results.InPower, ...
-        results.OutputWaveformFitMemless, ...
-        results.OutputWaveformFitMem, ...
-        param.PAModel.RefImp);
-    AMPMplot(results.PhaseShift,...
-        results.InPower, results.InputWaveform, ...
-        results.OutputWaveformFitMemless, ...
-        results.OutputWaveformFitMem, ...
-        param.PAModel.RefImp);
-    figure; plot(results.OutputWaveformFitMemless, '.');
-    figure; plot(results.OutputWaveformFitMem, '.');
-    %%
-    figure; plot(real(results.OutputWaveformFitMem), '-.');
-    hold on;
-    plot(real(results.OutputWaveform), '-x')
-    %%
-    figure; plot(real(results.OutputWaveformFitMemless), '-.');
-    hold on;
-    plot(real(results.OutputWaveform), '-x')
-end
+	
 %% DPD test
-% close all
-% [OutputWaveformAfterDPDPA, OutputWaveformAfterDPD] = ...
-%     DPDModelEst(param, results.InputWaveform, ...
-%     results.OutputWaveform, results.fitCoefMatMem, 1);
-%% dpd test lut
-% close all
-[OutputWaveformAfterDPDPA, OutputWaveformAfterDPD,...
-    inOutTableDPD] = ...
-    DPDModelEstLut(param, results, 1);
-%%
-% paCharTest(results.inOutTable,...
-% inOutTableDPD, param.PAModel.PALinearGain);
-
+%% DPD test
+close all
+[OutputWaveformAfterDPDPA, OutputWaveformAfterDPD] = ...
+    DPDModelEst(param, results.InputWaveform, ...
+    results.OutputWaveform, results.fitCoefMatMem, 1);
 %%
 [results.InputWaveformdBmDPDPA,...
     results.OutputWaveformdBmDPDPA, ...
     results.PhaseShiftDPDPA] =...
     AMAM_AMPM_gen(results.InputWaveform, ...
     OutputWaveformAfterDPDPA, param.PAModel.RefImp);
+[results.InputWaveformdBm,...
+    results.OutputWaveformdBm, ...
+    results.PhaseShift] =...
+    AMAM_AMPM_gen(results.InputWaveform, ...
+    results.OutputWaveform, param.PAModel.RefImp);
+[results.InputWaveformdBmModel,...
+    results.OutputWaveformdBmModel, ...
+    results.PhaseShiftModel] =...
+    AMAM_AMPM_gen(results.InputWaveform, ...
+    results.OutputWaveformFitMem, param.PAModel.RefImp);
+[results.InputWaveformdBmDPD,...
+    results.OutputWaveformdBmDPD, ...
+    results.PhaseShiftDPD] =...
+    AMAM_AMPM_gen(results.InputWaveform, ...
+    OutputWaveformAfterDPD, param.PAModel.RefImp);
+
 %%
 if 1
     close all
     figure;
-    plot(results.inOutTable(:,1), results.inOutTable(:,2), '.')
-    hold on
-    plot(inOutTableDPD(:,1), inOutTableDPD(:,2), '.')
+    plot(results.InputWaveformdBmDPDPA,...
+    results.OutputWaveformdBmDPDPA, 'x')
+    % plot(results.InputWaveformdBmModel,...
+    % results.OutputWaveformdBmModel, 'x')
+    %   plot(results.InputWaveformdBmDPD,...
+    % results.OutputWaveformdBmDPD, 'x')  
     grid on
+    hold on;
+    plot(results.InputWaveformdBm, results.OutputWaveformdBm, '.');
     xlabel('Input Power (dBm)')
     ylabel('Output Power (dBm)')
     title('Output vs Input Power LUT')
     figure;
-    plot(results.inOutTable(:,1), results.inOutTable(:,3), '.')
-    hold on
-    plot(inOutTableDPD(:,1), inOutTableDPD(:,3), '.')
-    grid on
-    xlabel('Input Power (dBm)')
-    ylabel('Output phase (deg)')
-    title('Output phase vs Input Power LUT')
-end
-if 1
-    % close all
-    figure;
-    plot(results.InputWaveformdBmDPDPA, results.OutputWaveformdBmDPDPA, '.')
+    plot(results.InputWaveformdBmDPDPA, results.PhaseShiftDPDPA, 'x')
+    % plot(results.InputWaveformdBmModel, results.PhaseShiftModel, 'x')
+        % plot(results.InputWaveformdBmDPD, results.PhaseShiftDPD, 'x');
     grid on
     hold on;
-    plot(results.inOutTable(:,1), results.inOutTable(:,2), '.');
-    xlabel('Input Power (dBm)')
-    ylabel('Output Power (dBm)')
-    title('Output vs Input Power LUT')
-    figure;
-    plot(results.InputWaveformdBmDPDPA, results.PhaseShiftDPDPA, '.')
-    grid on
-    hold on;
-    plot(results.inOutTable(:,1), results.inOutTable(:,3), '.')
+    plot(results.InputWaveformdBm, results.PhaseShift, '.')
     xlabel('Input Power (dBm)')
     ylabel('Output phase (deg)')
     title('Output phase vs Input Power LUT')
@@ -140,6 +112,24 @@ hold on
 spectrumPlot(1, OutputWaveformAfterDPDPA, 1);
 % spectrumPlot(1, results.OutputWaveform, 1);
 legend('no dpd', 'dpd')
+% legend('dpd', 'no dpd')
+
+demodResultLut = demodSignals(results.InputWaveform,...
+    results.OutputWaveform, OutputWaveformAfterDPDPALut,...
+    modOut, param, OutputWaveformAfterDPDLut);
+%%
+figure;
+spectrumPlot(1, results.OutputWaveform, 1);
+hold on
+spectrumPlot(1, OutputWaveformAfterDPDPALut, 1);
+
+
+
+
+
+
+
+
 % legend('dpd', 'no dpd')
 %% save data to dpd model
 % SaveDataToDpd(results.InputWaveform, ...

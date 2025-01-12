@@ -18,7 +18,7 @@ param.PAModel.M = 4; % Modulation order
 % 1 - QAM, 0 - sine
 param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
-param.PAModel.pindBm = [20]; % Input power (dBm)
+param.PAModel.pindBm = [19]; % Input power (dBm)
 % cubic PA model
 param.PAModel.Cubic.gain = 0; % Amplifier gain
 param.PAModel.Cubic.AMPMConversion = 0.5/4; % AMPMConversion cubic poly
