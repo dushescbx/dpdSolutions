@@ -20,7 +20,7 @@ param.PAModel.signalSel = 1;
 param.PAModel.sps = 4; %4; % Samples per symbol
 param.PAModel.pindBm = [19]; % Input power (dBm)
 % cubic PA model
-param.PAModel.Cubic.gain = 0; % Amplifier gain
+param.PAModel.Cubic.gain = 100; % Amplifier gain
 param.PAModel.Cubic.AMPMConversion = 0.5/4; % AMPMConversion cubic poly
 % Saleh PA model
 param.PAModel.Saleh.InputScaling = 0;
